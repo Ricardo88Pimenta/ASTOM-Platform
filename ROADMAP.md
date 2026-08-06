@@ -117,17 +117,37 @@ A Fase 1 ainda não está homologada para implantação real enquanto H2 permane
 
 ## Fase 4 — ASTOM UI
 
-### Planejado
+### Concluído em P1/H1 controlado
 
-- tokens de design;
-- paleta;
-- tipografia e espaçamento;
-- tema Plasma/Kvantum;
-- launcher;
-- painel superior;
-- dock inferior;
-- acessibilidade;
-- redução de movimento.
+- tokens experimentais de cor, espaçamento, raios, tipografia e movimento;
+- Control Center local e responsivo;
+- integração com as saídas JSON do planejador e do pré-flight;
+- visão geral, compatibilidade, componentes e recuperação;
+- filtros de componentes;
+- protótipo interativo de painel superior, launcher e dock;
+- densidade confortável e compacta;
+- redução de movimento;
+- navegação por teclado e landmarks semânticos;
+- exportação local de feedback;
+- servidor restrito a loopback por padrão;
+- Content Security Policy e bloqueio de métodos mutáveis;
+- suíte de interface com 14 testes aprovados.
+
+### Pronto para teste real
+
+- avaliação visual P1 na workstation de referência;
+- leitura de dados reais do ASTOM Core;
+- teste em escalas de 100%, 125% e 150%;
+- teste de teclado, launcher, filtros e exportação de feedback.
+
+### Planejado após P1
+
+- refinamento dos tokens com base no feedback;
+- protótipo nativo Qt/QML;
+- integração Plasma/Kvantum;
+- comportamento multimonitor;
+- testes ampliados de acessibilidade;
+- empacotamento reproduzível da interface.
 
 ## Fase 5 — Perfis profissionais
 
@@ -166,7 +186,7 @@ A Fase 1 ainda não está homologada para implantação real enquanto H2 permane
 
 ## Próximo marco verificável
 
-Executar a homologação H2 na workstation de referência usando apenas diagnóstico, planejamento e pré-flight. Caso o gate seja aprovado, a próxima entrega será o projeto de backup de configurações em ambiente isolado, ainda sem aplicação automática no sistema principal.
+Executar na workstation de referência uma sessão H2/P1 usando o Control Center somente leitura. A sessão deverá validar os dados reais, a legibilidade, a interação e a ausência de alterações no sistema. Depois da análise do feedback, será decidido se o próximo protótipo visual será P2 web ou a primeira implementação Qt/QML.
 
 ## Critério para a versão 1.0
 
