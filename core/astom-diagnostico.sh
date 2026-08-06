@@ -51,6 +51,65 @@ valor_seguro() {
     "$@" 2>/dev/null || true
 }
 
+gerar_relatorio() {
+    printf '# Relatório de diagnóstico ASTOM\n\n'
+    printf -- '- **Versão do diagnóstico:** `%s`\n' "$VERSAO"
+    printf -- '- **Data:** `%s`\n' "$(date --iso-8601=seconds 2>/dev/null || date)"
+    printf -- '- **Modo:** somente leitura\n\n'
+
+    printf '## Sistema\n\n'
+    printf '| Item | Resultado |\n'
+    printf '|---|---|\n'
+    linha 'Distribuição' "$DISTRIBUICAO"
+    linha 'Kernel' "$KERNEL"
+    linha 'Arquitetura' "$ARQUITETURA"
+    linha 'Desktop' "$DESKTOP"
+    linha 'Sessão gráfica' "$SESSAO"
+    linha 'Shell' "$SHELL_ATUAL"
+    linha 'Gerenciadores detectados' "$GERENCIADOR"
+
+    printf '\n## Armazenamento, boot e recuperação\n\n'
+    printf '| Item | Resultado |\n'
+    printf '|---|---|\n'
+    linha 'Sistema de arquivos da raiz' "$FS_RAIZ"
+    linha 'Opções de montagem da raiz' "$OPCOES_RAIZ"
+    linha 'Snapper' "$SNAPPER"
+    linha 'Boot' "$BOOT"
+    linha 'TRIM periódico' "$(estado_servico_sistema fstrim.timer)"
+
+    printf '\n## Gráficos e sessão\n\n'
+    printf '| Item | Resultado |\n'
+    printf '|---|---|\n'
+    linha 'GPU' "$GPU"
+    linha 'Driver NVIDIA' "$DRIVER_NVIDIA"
+    linha 'Wayland' "$([[ "$SESSAO" == "wayland" ]] && printf 'ativo' || printf 'não confirmado')"
+
+    printf '\n## Áudio, memória e segurança\n\n'
+    printf '| Item | Resultado |\n'
+    printf '|---|---|\n'
+    linha 'PipeWire' "$(estado_servico_usuario pipewire.service)"
+    linha 'WirePlumber' "$(estado_servico_usuario wireplumber.service)"
+    linha 'zRAM' "$(valor_seguro swapon --show --noheadings --output NAME | grep -q zram && printf 'ativa' || printf 'não confirmada')"
+    linha 'UFW' "$UFW"
+
+    printf '\n## Componentes detectados\n\n'
+    printf '| Componente | Estado |\n'
+    printf '|---|---|\n'
+    for componente in "${COMPONENTES[@]}"; do
+        if existe "$componente"; then
+            linha "$componente" 'disponível no PATH'
+        else
+            linha "$componente" 'não detectado no PATH'
+        fi
+    done
+
+    printf '\n## Observações\n\n'
+    printf -- '- O relatório não contém endereços IP, números de série ou conteúdo de arquivos pessoais.\n'
+    printf -- '- Ausência no `PATH` não prova que um aplicativo gráfico não esteja instalado.\n'
+    printf -- '- Nenhuma alteração de sistema foi executada.\n'
+    printf -- '- Resultados devem ser revisados antes de qualquer decisão de implantação.\n'
+}
+
 if [[ -r /etc/os-release ]]; then
     # shellcheck disable=SC1091
     source /etc/os-release
@@ -122,63 +181,30 @@ COMPONENTES=(
     bitwarden
 )
 
-{
-    printf '# Relatório de diagnóstico ASTOM\n\n'
-    printf -- '- **Versão do diagnóstico:** `%s`\n' "$VERSAO"
-    printf -- '- **Data:** `%s`\n' "$(date --iso-8601=seconds 2>/dev/null || date)"
-    printf -- '- **Modo:** somente leitura\n\n'
+DIRETORIO_SAIDA="$(dirname -- "$SAIDA")"
 
-    printf '## Sistema\n\n'
-    printf '| Item | Resultado |\n'
-    printf '|---|---|\n'
-    linha 'Distribuição' "$DISTRIBUICAO"
-    linha 'Kernel' "$KERNEL"
-    linha 'Arquitetura' "$ARQUITETURA"
-    linha 'Desktop' "$DESKTOP"
-    linha 'Sessão gráfica' "$SESSAO"
-    linha 'Shell' "$SHELL_ATUAL"
-    linha 'Gerenciadores detectados' "$GERENCIADOR"
+if [[ ! -d "$DIRETORIO_SAIDA" ]]; then
+    printf 'Erro: diretório de saída inexistente: %s\n' "$DIRETORIO_SAIDA" >&2
+    exit 1
+fi
 
-    printf '\n## Armazenamento, boot e recuperação\n\n'
-    printf '| Item | Resultado |\n'
-    printf '|---|---|\n'
-    linha 'Sistema de arquivos da raiz' "$FS_RAIZ"
-    linha 'Opções de montagem da raiz' "$OPCOES_RAIZ"
-    linha 'Snapper' "$SNAPPER"
-    linha 'Boot' "$BOOT"
-    linha 'TRIM periódico' "$(estado_servico_sistema fstrim.timer)"
+if [[ ! -w "$DIRETORIO_SAIDA" ]]; then
+    printf 'Erro: diretório de saída sem permissão de escrita: %s\n' "$DIRETORIO_SAIDA" >&2
+    exit 1
+fi
 
-    printf '\n## Gráficos e sessão\n\n'
-    printf '| Item | Resultado |\n'
-    printf '|---|---|\n'
-    linha 'GPU' "$GPU"
-    linha 'Driver NVIDIA' "$DRIVER_NVIDIA"
-    linha 'Wayland' "$([[ "$SESSAO" == "wayland" ]] && printf 'ativo' || printf 'não confirmado')"
+ARQUIVO_TEMPORARIO="${SAIDA}.tmp.$$"
+trap 'rm -f -- "$ARQUIVO_TEMPORARIO"' EXIT HUP INT TERM
 
-    printf '\n## Áudio, memória e segurança\n\n'
-    printf '| Item | Resultado |\n'
-    printf '|---|---|\n'
-    linha 'PipeWire' "$(estado_servico_usuario pipewire.service)"
-    linha 'WirePlumber' "$(estado_servico_usuario wireplumber.service)"
-    linha 'zRAM' "$(valor_seguro swapon --show --noheadings --output NAME | grep -q zram && printf 'ativa' || printf 'não confirmada')"
-    linha 'UFW' "$UFW"
+if ! gerar_relatorio > "$ARQUIVO_TEMPORARIO"; then
+    printf 'Erro: falha ao gerar o relatório: %s\n' "$SAIDA" >&2
+    exit 1
+fi
 
-    printf '\n## Componentes detectados\n\n'
-    printf '| Componente | Estado |\n'
-    printf '|---|---|\n'
-    for componente in "${COMPONENTES[@]}"; do
-        if existe "$componente"; then
-            linha "$componente" 'disponível no PATH'
-        else
-            linha "$componente" 'não detectado no PATH'
-        fi
-    done
+if ! mv -- "$ARQUIVO_TEMPORARIO" "$SAIDA"; then
+    printf 'Erro: falha ao gravar o relatório: %s\n' "$SAIDA" >&2
+    exit 1
+fi
 
-    printf '\n## Observações\n\n'
-    printf -- '- O relatório não contém endereços IP, números de série ou conteúdo de arquivos pessoais.\n'
-    printf -- '- Ausência no `PATH` não prova que um aplicativo gráfico não esteja instalado.\n'
-    printf -- '- Nenhuma alteração de sistema foi executada.\n'
-    printf -- '- Resultados devem ser revisados antes de qualquer decisão de implantação.\n'
-} > "$SAIDA"
-
+trap - EXIT HUP INT TERM
 printf 'Relatório criado: %s\n' "$SAIDA"
