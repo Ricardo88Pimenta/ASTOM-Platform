@@ -4,11 +4,13 @@ on:
   push:
     paths:
       - 'core/**'
+      - 'profiles/**'
       - 'tests/**'
       - '.github/workflows/validacao.yml'
   pull_request:
     paths:
       - 'core/**'
+      - 'profiles/**'
       - 'tests/**'
       - '.github/workflows/validacao.yml'
 
@@ -16,8 +18,8 @@ permissions:
   contents: read
 
 jobs:
-  diagnostico:
-    name: Diagnóstico somente leitura
+  validacao:
+    name: Diagnóstico e planejamento somente leitura
     runs-on: ubuntu-latest
 
     steps:
@@ -30,10 +32,31 @@ jobs:
           sudo apt-get install --yes shellcheck
 
       - name: Validar sintaxe Bash
-        run: bash -n core/astom-diagnostico.sh
+        run: |
+          bash -n core/astom-diagnostico.sh
+          bash -n tests/teste-diagnostico.sh
+          bash -n tests/teste-planejamento.sh
 
       - name: Executar ShellCheck
-        run: shellcheck core/astom-diagnostico.sh tests/teste-diagnostico.sh
+        run: |
+          shellcheck --severity=error \
+            core/astom-diagnostico.sh \
+            tests/teste-diagnostico.sh \
+            tests/teste-planejamento.sh
 
-      - name: Executar testes de regressão
+      - name: Validar sintaxe Python
+        run: python3 -m py_compile core/astom-planejar.py
+
+      - name: Executar testes do diagnóstico
         run: bash tests/teste-diagnostico.sh
+
+      - name: Executar testes do planejamento
+        run: bash tests/teste-planejamento.sh
+
+      - name: Validar perfil de referência
+        run: |
+          python3 -m json.tool profiles/cachyos-kde-wayland-base.json >/dev/null
+          python3 core/astom-planejar.py \
+            --manifest profiles/cachyos-kde-wayland-base.json \
+            --output /tmp/astom-plano.md
+          test -s /tmp/astom-plano.md
