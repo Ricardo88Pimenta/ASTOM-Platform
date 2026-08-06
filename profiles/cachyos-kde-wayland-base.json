@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "cachyos-kde-wayland-base",
   "title": "Base profissional CachyOS, KDE Plasma 6 e Wayland",
-  "description": "Perfil inicial de referência da ASTOM Platform. Este manifesto ainda não instala componentes.",
+  "description": "Perfil inicial de referência da ASTOM Platform. Este manifesto apenas diagnostica e planeja; nenhuma instalação é executada.",
   "target": {
     "distribution_ids": ["cachyos"],
     "desktop_contains": ["kde", "plasma"],
@@ -11,43 +11,83 @@
   },
   "components": [
     {
-      "id": "bash",
+      "id": "cap-bash",
       "type": "command",
       "command": "bash",
       "category": "core",
-      "description": "Interpretador Bash",
+      "description": "Interpretador Bash disponível no PATH",
       "required": true,
-      "when_missing": "instalar Bash pelo gerenciador oficial da distribuição"
+      "when_missing": "revisar o ambiente base; a ASTOM requer Bash"
     },
     {
-      "id": "python3",
+      "id": "pkg-bash",
+      "type": "package",
+      "manager": "pacman",
+      "package": "bash",
+      "category": "core",
+      "description": "Pacote Bash fornecido pelo repositório da distribuição",
+      "required": true,
+      "when_missing": "revisar a integridade da instalação base"
+    },
+    {
+      "id": "cap-python3",
       "type": "command",
       "command": "python3",
       "category": "core",
-      "description": "Runtime Python 3 para o planejador inicial",
+      "description": "Runtime Python 3 disponível no PATH",
       "required": true,
-      "when_missing": "instalar Python 3 pelo gerenciador oficial da distribuição"
+      "when_missing": "instalar Python 3 pelo gerenciador oficial após confirmação"
     },
     {
-      "id": "git",
+      "id": "pkg-python",
+      "type": "package",
+      "manager": "pacman",
+      "package": "python",
+      "category": "core",
+      "description": "Pacote Python da distribuição",
+      "required": true,
+      "when_missing": "planejar instalação do pacote python"
+    },
+    {
+      "id": "cap-git",
       "type": "command",
       "command": "git",
       "category": "desenvolvimento",
-      "description": "Controle de versão Git",
+      "description": "Controle de versão Git disponível no PATH",
       "required": true,
-      "when_missing": "instalar Git pelo gerenciador oficial da distribuição"
+      "when_missing": "instalar Git pelo gerenciador oficial após confirmação"
     },
     {
-      "id": "findmnt",
+      "id": "pkg-git",
+      "type": "package",
+      "manager": "pacman",
+      "package": "git",
+      "category": "desenvolvimento",
+      "description": "Pacote Git da distribuição",
+      "required": true,
+      "when_missing": "planejar instalação do pacote git"
+    },
+    {
+      "id": "cap-findmnt",
       "type": "command",
       "command": "findmnt",
       "category": "diagnóstico",
       "description": "Consulta segura de pontos de montagem",
       "required": true,
-      "when_missing": "instalar o pacote util-linux pelo gerenciador oficial"
+      "when_missing": "revisar o pacote util-linux"
     },
     {
-      "id": "systemctl",
+      "id": "pkg-util-linux",
+      "type": "package",
+      "manager": "pacman",
+      "package": "util-linux",
+      "category": "diagnóstico",
+      "description": "Ferramentas base de sistema, incluindo findmnt",
+      "required": true,
+      "when_missing": "revisar a integridade da instalação base"
+    },
+    {
+      "id": "cap-systemctl",
       "type": "command",
       "command": "systemctl",
       "category": "sistema",
@@ -56,7 +96,17 @@
       "when_missing": "revisar compatibilidade; o perfil de referência requer systemd"
     },
     {
-      "id": "snapper",
+      "id": "pkg-systemd",
+      "type": "package",
+      "manager": "pacman",
+      "package": "systemd",
+      "category": "sistema",
+      "description": "Pacote systemd da distribuição",
+      "required": true,
+      "when_missing": "revisar a integridade da instalação base"
+    },
+    {
+      "id": "cap-snapper",
       "type": "command",
       "command": "snapper",
       "category": "recuperação",
@@ -65,7 +115,17 @@
       "when_missing": "planejar instalação e configuração do Snapper antes de qualquer implantação"
     },
     {
-      "id": "bootctl",
+      "id": "pkg-snapper",
+      "type": "package",
+      "manager": "pacman",
+      "package": "snapper",
+      "category": "recuperação",
+      "description": "Pacote Snapper da distribuição",
+      "required": true,
+      "when_missing": "bloquear a futura implantação até o Snapper ser revisado"
+    },
+    {
+      "id": "cap-bootctl",
       "type": "command",
       "command": "bootctl",
       "category": "inicialização",
@@ -74,27 +134,39 @@
       "when_missing": "nenhuma; manter suporte a outros mecanismos de inicialização"
     },
     {
-      "id": "flatpak",
-      "type": "command",
-      "command": "flatpak",
+      "id": "pkg-flatpak",
+      "type": "package",
+      "manager": "pacman",
+      "package": "flatpak",
       "category": "aplicativos",
       "description": "Runtime de aplicações Flatpak",
       "required": false,
       "when_missing": "oferecer como módulo opcional após confirmação"
     },
     {
-      "id": "ufw",
-      "type": "command",
-      "command": "ufw",
+      "id": "flatpak-bitwarden",
+      "type": "flatpak",
+      "app_id": "com.bitwarden.desktop",
+      "category": "segurança",
+      "description": "Cliente Bitwarden Desktop via Flatpak",
+      "required": false,
+      "when_missing": "nenhuma; aplicativo opcional"
+    },
+    {
+      "id": "pkg-ufw",
+      "type": "package",
+      "manager": "pacman",
+      "package": "ufw",
       "category": "segurança",
       "description": "Interface de firewall UFW",
       "required": false,
-      "when_missing": "avaliar firewall compatível antes de recomendar instalação"
+      "when_missing": "avaliar o firewall ativo antes de recomendar instalação"
     },
     {
-      "id": "steam",
-      "type": "command",
-      "command": "steam",
+      "id": "pkg-steam",
+      "type": "package",
+      "manager": "pacman",
+      "package": "steam",
       "category": "jogos",
       "description": "Cliente Steam",
       "required": false,
