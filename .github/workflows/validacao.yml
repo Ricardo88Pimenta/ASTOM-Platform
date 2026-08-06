@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   validacao:
-    name: Diagnóstico e planejamento somente leitura
+    name: Diagnóstico, planejamento e perfis somente leitura
     runs-on: ubuntu-latest
 
     steps:
@@ -36,16 +36,22 @@ jobs:
           bash -n core/astom-diagnostico.sh
           bash -n tests/teste-diagnostico.sh
           bash -n tests/teste-planejamento.sh
+          bash -n tests/teste-perfil-referencia.sh
+          bash -n tests/teste-preflight-recuperacao.sh
 
       - name: Executar ShellCheck
         run: |
           shellcheck --severity=error \
             core/astom-diagnostico.sh \
             tests/teste-diagnostico.sh \
-            tests/teste-planejamento.sh
+            tests/teste-planejamento.sh \
+            tests/teste-perfil-referencia.sh \
+            tests/teste-preflight-recuperacao.sh
 
       - name: Validar sintaxe Python
-        run: python3 -m py_compile core/astom-planejar.py
+        run: |
+          python3 -m py_compile core/astom-planejar.py
+          python3 -m py_compile core/astom-preflight-recuperacao.py
 
       - name: Executar testes do diagnóstico
         run: bash tests/teste-diagnostico.sh
@@ -53,10 +59,8 @@ jobs:
       - name: Executar testes do planejamento
         run: bash tests/teste-planejamento.sh
 
-      - name: Validar perfil de referência
-        run: |
-          python3 -m json.tool profiles/cachyos-kde-wayland-base.json >/dev/null
-          python3 core/astom-planejar.py \
-            --manifest profiles/cachyos-kde-wayland-base.json \
-            --output /tmp/astom-plano.md
-          test -s /tmp/astom-plano.md
+      - name: Executar testes do perfil de referência
+        run: bash tests/teste-perfil-referencia.sh
+
+      - name: Executar pré-flight de recuperação
+        run: bash tests/teste-preflight-recuperacao.sh
