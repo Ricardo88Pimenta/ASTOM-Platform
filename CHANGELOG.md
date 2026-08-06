@@ -6,69 +6,63 @@ Todas as mudanças relevantes da ASTOM Platform serão registradas neste documen
 
 ### Adicionado
 
-- repositório oficial da ASTOM Platform;
-- README institucional em português do Brasil;
-- definição de missão, visão e princípios;
-- documentação do estado atual da workstation de referência;
-- arquitetura inicial em camadas;
-- modelo inicial de segurança;
-- linguagem de design inicial;
-- roadmap de desenvolvimento;
-- política provisória de licenciamento;
-- primeiro diagnóstico somente leitura em `core/astom-diagnostico.sh`;
-- suíte automatizada de regressão em `tests/teste-diagnostico.sh`;
-- primeiro planejador somente leitura em `core/astom-planejar.py`;
-- perfil declarativo `profiles/cachyos-kde-wayland-base.json`;
-- suíte automatizada do planejador em `tests/teste-planejamento.sh`;
-- workflow de validação contínua em `.github/workflows/validacao.yml`;
-- documentação do modo de planejamento;
-- relatórios atualizados dos testes controlados.
+- repositório oficial e documentação institucional;
+- arquitetura, segurança, linguagem visual, Blueprint e roadmap;
+- diagnóstico somente leitura em `core/astom-diagnostico.sh`;
+- planejador somente leitura em `core/astom-planejar.py`;
+- suporte a componentes `command`, `package` e `flatpak`;
+- consulta de pacotes Pacman, APT, DNF e Zypper;
+- comparação exata de versões;
+- saída JSON estruturada do planejador;
+- perfil ampliado `profiles/cachyos-kde-wayland-base.json`;
+- pré-flight de recuperação em `core/astom-preflight-recuperacao.py`;
+- consulta somente leitura de Btrfs e configurações Snapper;
+- política de homologação H0 a H4;
+- documentação da detecção de componentes e do pré-flight;
+- testes automatizados e workflow de validação contínua.
 
 ### Corrigido
 
-- falha que retornava código `0` quando o diretório de saída do diagnóstico não existia;
-- mensagem falsa de sucesso após falha de gravação;
-- ausência de validação do diretório de destino;
-- risco de permanência de arquivo parcial durante a geração do relatório.
+- tratamento de falhas de gravação do diagnóstico;
+- mensagem falsa de sucesso após falha;
+- risco de arquivo parcial durante geração de relatórios;
+- validações de campos específicos por tipo de componente.
 
 ### Validado
 
 #### Diagnóstico
 
-- 10 testes automatizados aprovados em ambiente controlado;
-- sintaxe Bash;
-- execução sem privilégios administrativos;
-- caminho contendo espaços;
-- tratamento de diretório inexistente;
-- tratamento de diretório sem escrita;
-- conteúdo mínimo;
-- privacidade básica;
-- limpeza de arquivos temporários;
-- ausência de comandos destrutivos conhecidos;
-- execução com `PATH` reduzido.
+- 10 testes aprovados em ambiente controlado.
 
-#### Planejamento
+#### Planejamento e detecção
 
-- 8 grupos de testes automatizados aprovados em ambiente controlado;
-- compilação e sintaxe Python;
-- leitura e validação de manifesto JSON;
-- detecção de comandos presentes e ausentes;
-- rejeição de JSON inválido;
-- rejeição de schema incompatível;
-- tratamento de falha na saída;
+- 14 testes aprovados;
+- comandos, pacotes e Flatpaks;
+- saída Markdown e JSON;
+- erros de schema e manifesto;
+- detectores indisponíveis;
 - privacidade básica;
-- gravação atômica e limpeza de temporários;
 - ausência de ações mutáveis conhecidas.
 
-### Esclarecido
+#### Perfil de referência
 
-- a workstation de referência está funcional e amplamente configurada;
-- os módulos ASTOM UI, Workspace, Deployment e Compliance ainda estão em especificação;
-- o ASTOM Core possui apenas os primeiros protótipos somente leitura;
-- percentuais informais de progresso não representam implementação comprovada;
-- itens só serão tratados como concluídos quando houver artefato verificável e teste correspondente;
-- diagnóstico e planejador permanecem em `0.1.0-dev` até validação na workstation CachyOS/KDE de referência;
-- nenhuma função de implantação foi liberada.
+- 4 testes aprovados;
+- JSON, invariantes, tipos de componente e degradação segura fora do alvo.
+
+#### Pré-flight de recuperação
+
+- 10 testes aprovados;
+- gates apto e bloqueado;
+- configuração Snapper raiz ausente;
+- saída Snapper malformada;
+- JSON estruturado;
+- gravação atômica e ausência de operações mutáveis.
+
+### Estado de homologação
+
+- H1 controlado: aprovado para diagnóstico, planejamento, perfil e pré-flight;
+- H2 workstation de referência: pendente;
+- instalação de pacotes, criação de snapshots, backup e rollback: bloqueados.
 
 ### Plataforma de referência registrada
 
@@ -77,9 +71,6 @@ Todas as mudanças relevantes da ASTOM Platform serão registradas neste documen
 - Wayland;
 - Btrfs e Snapper;
 - systemd-boot com UKI;
-- Limine como recuperação adicional;
-- NVIDIA, Vulkan e OpenGL validados;
-- PipeWire, WirePlumber, TRIM e zRAM;
-- UFW;
-- stack de jogos e aplicações-base;
-- fontes profissionais e Kvantum instalados.
+- NVIDIA, Vulkan e OpenGL;
+- PipeWire, WirePlumber, TRIM, zRAM e UFW;
+- stack de jogos e aplicações-base.
