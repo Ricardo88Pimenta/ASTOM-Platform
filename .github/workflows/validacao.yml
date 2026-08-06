@@ -5,12 +5,14 @@ on:
     paths:
       - 'core/**'
       - 'profiles/**'
+      - 'ui/**'
       - 'tests/**'
       - '.github/workflows/validacao.yml'
   pull_request:
     paths:
       - 'core/**'
       - 'profiles/**'
+      - 'ui/**'
       - 'tests/**'
       - '.github/workflows/validacao.yml'
 
@@ -19,7 +21,7 @@ permissions:
 
 jobs:
   validacao:
-    name: Diagnóstico, planejamento e perfis somente leitura
+    name: Core, recuperação e interface somente leitura
     runs-on: ubuntu-latest
 
     steps:
@@ -52,6 +54,11 @@ jobs:
         run: |
           python3 -m py_compile core/astom-planejar.py
           python3 -m py_compile core/astom-preflight-recuperacao.py
+          python3 -m py_compile ui/astom-ui.py
+          python3 -m py_compile tests/teste-interface.py
+
+      - name: Validar JavaScript da interface
+        run: node --check ui/control-center/app.js
 
       - name: Executar testes do diagnóstico
         run: bash tests/teste-diagnostico.sh
@@ -64,3 +71,6 @@ jobs:
 
       - name: Executar pré-flight de recuperação
         run: bash tests/teste-preflight-recuperacao.sh
+
+      - name: Executar testes da interface P1
+        run: python3 tests/teste-interface.py
