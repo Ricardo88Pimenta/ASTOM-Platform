@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "astom_version": "0.2.0-dev",
+  "mode": "read-only",
+  "source": "demo",
+  "generated_at": "2026-08-06T23:13:00+00:00",
+  "homologation": {
+    "current": "H1",
+    "next": "H2",
+    "interface": "P1",
+    "message": "Protótipo funcional para avaliação de experiência e leitura de dados reais."
+  },
+  "planner": {
+    "astom_version": "0.1.0-dev",
+    "mode": "read-only",
+    "generated_at": "2026-08-06T23:13:00+00:00",
+    "profile": {
+      "id": "cachyos-kde-wayland-base",
+      "title": "Base profissional CachyOS, KDE Plasma 6 e Wayland",
+      "manifest": "profiles/cachyos-kde-wayland-base.json"
+    },
+    "target": [
+      {"criterion": "Distribuição", "detected": "cachyos", "status": "compatível"},
+      {"criterion": "Desktop", "detected": "KDE", "status": "compatível"},
+      {"criterion": "Sessão", "detected": "wayland", "status": "compatível"},
+      {"criterion": "Sistema de arquivos raiz", "detected": "btrfs", "status": "compatível"}
+    ],
+    "components": [
+      {"identificador": "bash", "tipo": "command", "categoria": "core", "descricao": "Interpretador Bash", "obrigatorio": true, "estado": "presente", "versao": "não aplicável", "fonte": "PATH", "acao": "nenhuma"},
+      {"identificador": "python3", "tipo": "command", "categoria": "core", "descricao": "Runtime Python 3", "obrigatorio": true, "estado": "presente", "versao": "não aplicável", "fonte": "PATH", "acao": "nenhuma"},
+      {"identificador": "snapper", "tipo": "package", "categoria": "recuperação", "descricao": "Gerenciamento de snapshots Btrfs", "obrigatorio": true, "estado": "presente", "versao": "0.12.1", "fonte": "pacman", "acao": "nenhuma"},
+      {"identificador": "flatpak", "tipo": "package", "categoria": "aplicativos", "descricao": "Runtime de aplicações Flatpak", "obrigatorio": false, "estado": "presente", "versao": "1.16.1", "fonte": "pacman", "acao": "nenhuma"},
+      {"identificador": "bitwarden", "tipo": "flatpak", "categoria": "segurança", "descricao": "Gerenciador de senhas", "obrigatorio": false, "estado": "presente", "versao": "2026.7.0", "fonte": "flatpak", "acao": "nenhuma"},
+      {"identificador": "steam", "tipo": "package", "categoria": "jogos", "descricao": "Cliente Steam", "obrigatorio": false, "estado": "presente", "versao": "1.0.0.82", "fonte": "pacman", "acao": "nenhuma"},
+      {"identificador": "heroic", "tipo": "flatpak", "categoria": "jogos", "descricao": "Heroic Games Launcher", "obrigatorio": false, "estado": "versão divergente", "versao": "2.17.1", "fonte": "flatpak", "acao": "revisar versão antes de qualquer alteração"},
+      {"identificador": "onlyoffice", "tipo": "flatpak", "categoria": "produtividade", "descricao": "Suite de escritório", "obrigatorio": false, "estado": "opcional ausente", "versao": "não instalada", "fonte": "flatpak", "acao": "nenhuma"},
+      {"identificador": "vulkan-tools", "tipo": "package", "categoria": "gráficos", "descricao": "Ferramentas de diagnóstico Vulkan", "obrigatorio": true, "estado": "presente", "versao": "1.4.321", "fonte": "pacman", "acao": "nenhuma"},
+      {"identificador": "ufw", "tipo": "package", "categoria": "segurança", "descricao": "Firewall UFW", "obrigatorio": false, "estado": "presente", "versao": "0.36.2", "fonte": "pacman", "acao": "nenhuma"}
+    ],
+    "summary": {
+      "presentes": 8,
+      "ausentes_obrigatorios": 0,
+      "opcionais_ausentes": 1,
+      "versoes_divergentes": 1,
+      "detectores_indisponiveis": 0
+    }
+  },
+  "recovery": {
+    "astom_version": "0.1.0-dev",
+    "mode": "read-only",
+    "generated_at": "2026-08-06T23:13:00+00:00",
+    "gate": "apto para teste controlado de snapshot",
+    "checks": [
+      {"id": "root-filesystem", "descricao": "Sistema de arquivos da raiz", "detectado": "btrfs", "estado": "aprovado", "bloqueante": true},
+      {"id": "root-source", "descricao": "Origem do ponto de montagem raiz", "detectado": "/dev/nvme0n1p2", "estado": "informativo", "bloqueante": false},
+      {"id": "btrfs-cli", "descricao": "Ferramenta btrfs disponível", "detectado": "disponível", "estado": "aprovado", "bloqueante": true},
+      {"id": "snapper-cli", "descricao": "Ferramenta Snapper disponível", "detectado": "disponível", "estado": "aprovado", "bloqueante": true},
+      {"id": "snapper-config-query", "descricao": "Consulta de configurações Snapper", "detectado": "consultado", "estado": "aprovado", "bloqueante": true},
+      {"id": "snapper-root-config", "descricao": "Configuração Snapper associada à raiz", "detectado": "root", "estado": "aprovado", "bloqueante": true}
+    ],
+    "snapper_configs": [{"config": "root", "subvolume": "/"}]
+  }
+}
