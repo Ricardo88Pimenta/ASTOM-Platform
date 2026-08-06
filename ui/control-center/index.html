@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Protótipo funcional da interface ASTOM Platform em modo somente leitura.">
+  <title>ASTOM Control Center</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
+
+  <header class="topbar" aria-label="Barra superior ASTOM">
+    <div class="brand" aria-label="ASTOM Platform">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span><strong>ASTOM</strong><small>Control Center</small></span>
+    </div>
+    <div class="topbar-status">
+      <span class="mode-pill"><span class="status-dot" aria-hidden="true"></span>Somente leitura</span>
+      <span id="clock" class="clock" aria-label="Horário local"></span>
+    </div>
+  </header>
+
+  <div class="app-shell">
+    <nav class="sidebar" aria-label="Navegação principal">
+      <button class="nav-item is-active" data-view="overview" aria-current="page">
+        <span aria-hidden="true">◫</span><span>Visão geral</span>
+      </button>
+      <button class="nav-item" data-view="components">
+        <span aria-hidden="true">▦</span><span>Componentes</span>
+      </button>
+      <button class="nav-item" data-view="recovery">
+        <span aria-hidden="true">↶</span><span>Recuperação</span>
+      </button>
+      <button class="nav-item" data-view="workspace">
+        <span aria-hidden="true">◇</span><span>Workspace</span>
+      </button>
+      <button class="nav-item" data-view="test-session">
+        <span aria-hidden="true">✓</span><span>Sessão de teste</span>
+      </button>
+      <div class="sidebar-footer">
+        <span id="source-label">Carregando dados…</span>
+        <small id="generated-at"></small>
+      </div>
+    </nav>
+
+    <main id="conteudo" class="content" tabindex="-1">
+      <div id="loading" class="loading-state" role="status" aria-live="polite">
+        <span class="loader" aria-hidden="true"></span>
+        Preparando o ambiente ASTOM…
+      </div>
+
+      <section id="view-overview" class="view is-active" data-view-panel="overview" aria-labelledby="overview-title">
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">Estado da plataforma</p>
+            <h1 id="overview-title">Visão geral</h1>
+            <p>Leitura consolidada do perfil, compatibilidade e gate de recuperação.</p>
+          </div>
+          <button id="refresh-button" class="button button-primary" type="button">Atualizar dados</button>
+        </div>
+
+        <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+
+        <div class="hero-grid">
+          <article class="hero-card">
+            <span class="card-label">Homologação atual</span>
+            <div class="hero-value"><strong id="homologation-current">—</strong><span>→</span><strong id="homologation-next">—</strong></div>
+            <p id="homologation-message">Aguardando dados.</p>
+          </article>
+          <article class="hero-card">
+            <span class="card-label">Perfil avaliado</span>
+            <strong id="profile-title" class="profile-title">—</strong>
+            <p id="profile-id">—</p>
+          </article>
+          <article class="hero-card">
+            <span class="card-label">Gate de recuperação</span>
+            <strong id="recovery-gate" class="gate-value">—</strong>
+            <p>Nenhuma ação mutável está disponível nesta interface.</p>
+          </article>
+        </div>
+
+        <section class="panel" aria-labelledby="summary-title">
+          <div class="panel-heading">
+            <div><p class="eyebrow">Inventário</p><h2 id="summary-title">Resumo de componentes</h2></div>
+          </div>
+          <div id="summary-grid" class="summary-grid"></div>
+        </section>
+
+        <section class="panel" aria-labelledby="compatibility-title">
+          <div class="panel-heading">
+            <div><p class="eyebrow">Plataforma-alvo</p><h2 id="compatibility-title">Compatibilidade detectada</h2></div>
+          </div>
+          <div id="target-grid" class="target-grid"></div>
+        </section>
+      </section>
+
+      <section id="view-components" class="view" data-view-panel="components" aria-labelledby="components-title" hidden>
+        <div class="page-heading">
+          <div><p class="eyebrow">ASTOM Core</p><h1 id="components-title">Componentes</h1><p>Pacotes, comandos e Flatpaks avaliados pelo planejador.</p></div>
+        </div>
+        <section class="panel">
+          <div class="toolbar">
+            <label class="search-field"><span class="sr-only">Filtrar componentes</span><input id="component-filter" type="search" placeholder="Filtrar por nome, categoria ou estado" autocomplete="off"></label>
+            <select id="status-filter" aria-label="Filtrar por estado">
+              <option value="all">Todos os estados</option>
+              <option value="presente">Presentes</option>
+              <option value="ausente">Ausentes</option>
+              <option value="opcional ausente">Opcionais ausentes</option>
+              <option value="versão divergente">Versão divergente</option>
+              <option value="detector indisponível">Detector indisponível</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Componente</th><th>Tipo</th><th>Categoria</th><th>Estado</th><th>Versão</th><th>Fonte</th></tr></thead>
+              <tbody id="components-body"></tbody>
+            </table>
+          </div>
+          <p id="component-count" class="table-caption"></p>
+        </section>
+      </section>
+
+      <section id="view-recovery" class="view" data-view-panel="recovery" aria-labelledby="recovery-title" hidden>
+        <div class="page-heading">
+          <div><p class="eyebrow">Fase 2 — somente leitura</p><h1 id="recovery-title">Recuperação</h1><p>Pré-flight de Btrfs e Snapper antes de qualquer futura operação de backup.</p></div>
+        </div>
+        <div class="recovery-layout">
+          <section class="panel">
+            <div class="panel-heading"><div><p class="eyebrow">Gate</p><h2 id="recovery-heading">Verificações</h2></div><span id="recovery-badge" class="badge">—</span></div>
+            <div id="recovery-checks" class="check-list"></div>
+          </section>
+          <aside class="safety-card" aria-labelledby="safety-title">
+            <span class="safety-icon" aria-hidden="true">⌁</span>
+            <h2 id="safety-title">Barreira de segurança</h2>
+            <p>Este protótipo não cria snapshots, não instala pacotes e não altera configurações.</p>
+            <ul><li>API aceita apenas leitura</li><li>Servidor local por padrão</li><li>Sem telemetria</li><li>Dados não são enviados à internet</li></ul>
+          </aside>
+        </div>
+      </section>
+
+      <section id="view-workspace" class="view" data-view-panel="workspace" aria-labelledby="workspace-title" hidden>
+        <div class="page-heading">
+          <div><p class="eyebrow">Design Lab P1</p><h1 id="workspace-title">Workspace</h1><p>Protótipo interativo do painel, launcher e dock previstos para a ASTOM UI.</p></div>
+          <div class="segmented" aria-label="Densidade da interface">
+            <button type="button" data-density="comfortable" class="is-active">Confortável</button>
+            <button type="button" data-density="compact">Compacta</button>
+          </div>
+        </div>
+
+        <div id="workspace-preview" class="workspace-preview">
+          <div class="desktop-panel">
+            <div class="desktop-brand"><span class="mini-mark" aria-hidden="true"></span>ASTOM</div>
+            <div class="desktop-status"><span>Wayland</span><span>◉ Áudio</span><span>⌁ Rede</span><span id="preview-clock">20:13</span></div>
+          </div>
+          <div class="desktop-canvas">
+            <div class="desktop-copy"><span>Engenharia em primeiro plano.</span><strong>Um espaço de trabalho calmo, preciso e recuperável.</strong></div>
+            <div id="launcher" class="launcher" aria-hidden="true">
+              <div class="launcher-header"><label><span class="sr-only">Buscar aplicativos</span><input id="launcher-search" type="search" placeholder="Buscar aplicativos"></label><button id="close-launcher" type="button" aria-label="Fechar launcher">×</button></div>
+              <div id="launcher-grid" class="launcher-grid">
+                <button type="button" data-app="Arquivos"><span>▤</span>Arquivos</button>
+                <button type="button" data-app="Terminal"><span>›_</span>Terminal</button>
+                <button type="button" data-app="Projetos"><span>⌂</span>Projetos</button>
+                <button type="button" data-app="Navegador"><span>◎</span>Navegador</button>
+                <button type="button" data-app="Documentos"><span>▧</span>Documentos</button>
+                <button type="button" data-app="Configurações"><span>⚙</span>Configurações</button>
+                <button type="button" data-app="Desenvolvimento"><span>{ }</span>Desenvolvimento</button>
+                <button type="button" data-app="Jogos"><span>◇</span>Jogos</button>
+              </div>
+            </div>
+          </div>
+          <div class="desktop-dock" aria-label="Dock de demonstração">
+            <button id="open-launcher" type="button" aria-label="Abrir launcher"><span class="dock-mark" aria-hidden="true"></span></button>
+            <button type="button" aria-label="Arquivos">▤</button>
+            <button type="button" aria-label="Terminal">›_</button>
+            <button type="button" aria-label="Navegador">◎</button>
+            <button type="button" aria-label="Projetos">⌂</button>
+          </div>
+        </div>
+        <div class="workspace-options">
+          <label class="switch"><input id="motion-toggle" type="checkbox"><span></span>Reduzir movimento</label>
+          <p>O protótipo usa apenas recursos locais e não representa ainda um tema Plasma ou Kvantum instalável.</p>
+        </div>
+      </section>
+
+      <section id="view-test-session" class="view" data-view-panel="test-session" aria-labelledby="test-title" hidden>
+        <div class="page-heading"><div><p class="eyebrow">Avaliação real</p><h1 id="test-title">Sessão de teste</h1><p>Registre impressões de uso sem transmitir dados para nenhum servidor.</p></div></div>
+        <div class="test-layout">
+          <section class="panel">
+            <h2>Checklist</h2>
+            <div id="test-checklist" class="test-checklist">
+              <label><input type="checkbox" value="hierarquia">A hierarquia visual é clara em poucos segundos.</label>
+              <label><input type="checkbox" value="leitura">Textos e estados são confortáveis para leitura prolongada.</label>
+              <label><input type="checkbox" value="navegacao">A navegação lateral é previsível.</label>
+              <label><input type="checkbox" value="launcher">O launcher é rápido e fácil de compreender.</label>
+              <label><input type="checkbox" value="dock">A dock tem presença discreta e funcional.</label>
+              <label><input type="checkbox" value="densidade">A densidade funciona bem no monitor utilizado.</label>
+              <label><input type="checkbox" value="seguranca">O estado somente leitura e os gates são compreensíveis.</label>
+            </div>
+          </section>
+          <section class="panel feedback-panel">
+            <label for="feedback-notes">Observações</label>
+            <textarea id="feedback-notes" rows="8" placeholder="Registre desconfortos, pontos fortes e sugestões objetivas."></textarea>
+            <div class="rating-row" role="group" aria-label="Avaliação geral">
+              <span>Avaliação geral</span>
+              <div id="rating-buttons">
+                <button type="button" data-rating="1">1</button><button type="button" data-rating="2">2</button><button type="button" data-rating="3">3</button><button type="button" data-rating="4">4</button><button type="button" data-rating="5">5</button>
+              </div>
+            </div>
+            <button id="export-feedback" class="button button-primary" type="button">Exportar resultado local</button>
+            <p class="privacy-note">O arquivo contém apenas o checklist, a avaliação, as preferências visuais e suas observações.</p>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
