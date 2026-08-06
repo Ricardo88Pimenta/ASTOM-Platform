@@ -18,7 +18,8 @@
 - separação entre máquina configurada e produto ASTOM implementado;
 - Blueprint inicial;
 - plano de testes;
-- validação contínua inicial com GitHub Actions.
+- validação contínua inicial com GitHub Actions;
+- política formal de níveis de homologação H0 a H4.
 
 ### Em andamento
 
@@ -31,7 +32,7 @@
 
 ## Fase 1 — ASTOM Core mínimo
 
-### Concluído
+### Concluído em H1 controlado
 
 - diagnóstico somente leitura em Bash;
 - tratamento seguro e atômico da saída do diagnóstico;
@@ -41,16 +42,19 @@
 - planejador somente leitura em Python;
 - comparação inicial entre alvo e ambiente;
 - geração de plano Markdown sem alterações;
-- suíte do planejador com 8 grupos de teste aprovados.
+- detecção de comandos pelo `PATH`;
+- detecção de pacotes por Pacman, APT, DNF e Zypper;
+- detecção de aplicações Flatpak;
+- comparação exata de versões;
+- exportação JSON estruturada;
+- suíte ampliada do planejador com 14 testes aprovados;
+- validação do perfil de referência com 4 testes aprovados.
 
 ### Em andamento
 
-- inventário mais completo de hardware e software;
-- detecção de distribuição e capacidades;
-- detecção de pacotes por gerenciador;
-- detecção de aplicações Flatpak;
-- comparação de versões;
-- logging estruturado;
+- inventário mais completo de hardware;
+- comparação semântica de versões;
+- logging estruturado persistente;
 - testes na workstation de referência;
 - testes em instalação limpa.
 
@@ -59,26 +63,46 @@
 - composição de múltiplos perfis;
 - dependências entre componentes;
 - classificação de risco por ação;
-- exportação de relatório estruturado para consumo por outras interfaces.
+- exportação para outras interfaces.
+
+## Gate de homologação da Fase 1
+
+- H0 — revisão estática: concluída;
+- H1 — ambiente controlado: concluída;
+- H2 — workstation CachyOS/KDE/Wayland: pendente;
+- H3 — instalação limpa: pendente.
+
+A Fase 1 ainda não está homologada para implantação real enquanto H2 permanecer pendente.
 
 ## Fase 2 — Deployment e rollback
 
-### Planejado
+### Em andamento, somente leitura
+
+- pré-flight de recuperação;
+- detecção de Btrfs;
+- detecção das ferramentas Btrfs e Snapper;
+- consulta de configurações Snapper;
+- verificação de configuração associada à raiz;
+- gate de prontidão para futuro teste controlado de snapshot;
+- suíte do pré-flight com 10 testes aprovados.
+
+### Planejado e bloqueado
 
 - backup de configurações;
-- integração inicial com snapshots Btrfs/Snapper;
+- criação controlada de snapshot;
 - aplicação idempotente;
 - validação pós-instalação;
 - rollback por componente;
 - relatório final de alterações.
 
-> Nenhuma ação mutável será liberada antes de backup, validação e rollback testados.
+> Nenhuma ação mutável será liberada antes da homologação H2, de backup verificável e de rollback testado.
 
 ## Fase 3 — Perfil de referência CachyOS/KDE
 
 ### Em andamento
 
-- manifesto base para CachyOS, KDE Plasma 6, Wayland e Btrfs.
+- manifesto base para CachyOS, KDE Plasma 6, Wayland e Btrfs;
+- capacidades, pacotes Pacman e Flatpaks declarados.
 
 ### Planejado
 
@@ -142,10 +166,8 @@
 
 ## Próximo marco verificável
 
-O próximo marco é ampliar o inventário e a detecção do ASTOM Core para identificar pacotes e Flatpaks de forma confiável, mantendo todo o fluxo em modo somente leitura.
-
-Depois disso, serão especificados e testados o plano de backup e a integração com Snapper. Somente após esses mecanismos será considerada qualquer função de aplicação.
+Executar a homologação H2 na workstation de referência usando apenas diagnóstico, planejamento e pré-flight. Caso o gate seja aprovado, a próxima entrega será o projeto de backup de configurações em ambiente isolado, ainda sem aplicação automática no sistema principal.
 
 ## Critério para a versão 1.0
 
-A versão 1.0 não será definida por aparência ou quantidade de recursos. Ela exigirá instalação reproduzível, validação documentada, rollback testado, compatibilidade declarada e ausência de discrepâncias conhecidas entre documentação e implementação.
+A versão 1.0 exigirá instalação reproduzível, validação documentada, rollback testado, compatibilidade declarada e ausência de discrepâncias conhecidas entre documentação e implementação.
