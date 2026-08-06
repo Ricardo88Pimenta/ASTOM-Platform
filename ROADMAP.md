@@ -15,7 +15,10 @@
 - definição da missão, visão e princípios;
 - registro do estado real da workstation de referência;
 - documentação inicial de arquitetura, segurança e linguagem visual;
-- separação entre máquina configurada e produto ASTOM implementado.
+- separação entre máquina configurada e produto ASTOM implementado;
+- Blueprint inicial;
+- plano de testes;
+- validação contínua inicial com GitHub Actions.
 
 ### Em andamento
 
@@ -23,20 +26,40 @@
 - política de licenciamento;
 - catálogo de componentes;
 - critérios objetivos de certificação;
-- definição da estrutura de diretórios;
-- consolidação do Blueprint.
+- consolidação da estrutura de diretórios;
+- refinamento do Blueprint.
 
 ## Fase 1 — ASTOM Core mínimo
 
+### Concluído
+
+- diagnóstico somente leitura em Bash;
+- tratamento seguro e atômico da saída do diagnóstico;
+- suíte de regressão do diagnóstico com 10 testes aprovados;
+- manifesto declarativo inicial do perfil CachyOS/KDE/Wayland;
+- validação de schema do manifesto;
+- planejador somente leitura em Python;
+- comparação inicial entre alvo e ambiente;
+- geração de plano Markdown sem alterações;
+- suíte do planejador com 8 grupos de teste aprovados.
+
+### Em andamento
+
+- inventário mais completo de hardware e software;
+- detecção de distribuição e capacidades;
+- detecção de pacotes por gerenciador;
+- detecção de aplicações Flatpak;
+- comparação de versões;
+- logging estruturado;
+- testes na workstation de referência;
+- testes em instalação limpa.
+
 ### Planejado
 
-- inventário de hardware e software;
-- detecção de distribuição e capacidades;
-- leitura de manifesto declarativo;
-- modo somente diagnóstico;
-- geração de plano sem alteração;
-- logging estruturado;
-- testes unitários iniciais.
+- composição de múltiplos perfis;
+- dependências entre componentes;
+- classificação de risco por ação;
+- exportação de relatório estruturado para consumo por outras interfaces.
 
 ## Fase 2 — Deployment e rollback
 
@@ -49,7 +72,13 @@
 - rollback por componente;
 - relatório final de alterações.
 
+> Nenhuma ação mutável será liberada antes de backup, validação e rollback testados.
+
 ## Fase 3 — Perfil de referência CachyOS/KDE
+
+### Em andamento
+
+- manifesto base para CachyOS, KDE Plasma 6, Wayland e Btrfs.
 
 ### Planejado
 
@@ -107,9 +136,15 @@
 - contribuição externa;
 - SBOM;
 - assinatura de lançamentos;
-- pipeline de CI;
+- ampliação do pipeline de CI;
 - auditoria de segurança;
 - versão candidata.
+
+## Próximo marco verificável
+
+O próximo marco é ampliar o inventário e a detecção do ASTOM Core para identificar pacotes e Flatpaks de forma confiável, mantendo todo o fluxo em modo somente leitura.
+
+Depois disso, serão especificados e testados o plano de backup e a integração com Snapper. Somente após esses mecanismos será considerada qualquer função de aplicação.
 
 ## Critério para a versão 1.0
 
