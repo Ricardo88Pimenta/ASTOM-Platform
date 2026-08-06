@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "id": "cachyos-kde-wayland-base",
+  "title": "Base profissional CachyOS, KDE Plasma 6 e Wayland",
+  "description": "Perfil inicial de referência da ASTOM Platform. Este manifesto ainda não instala componentes.",
+  "target": {
+    "distribution_ids": ["cachyos"],
+    "desktop_contains": ["kde", "plasma"],
+    "session_types": ["wayland"],
+    "root_filesystems": ["btrfs"]
+  },
+  "components": [
+    {
+      "id": "bash",
+      "type": "command",
+      "command": "bash",
+      "category": "core",
+      "description": "Interpretador Bash",
+      "required": true,
+      "when_missing": "instalar Bash pelo gerenciador oficial da distribuição"
+    },
+    {
+      "id": "python3",
+      "type": "command",
+      "command": "python3",
+      "category": "core",
+      "description": "Runtime Python 3 para o planejador inicial",
+      "required": true,
+      "when_missing": "instalar Python 3 pelo gerenciador oficial da distribuição"
+    },
+    {
+      "id": "git",
+      "type": "command",
+      "command": "git",
+      "category": "desenvolvimento",
+      "description": "Controle de versão Git",
+      "required": true,
+      "when_missing": "instalar Git pelo gerenciador oficial da distribuição"
+    },
+    {
+      "id": "findmnt",
+      "type": "command",
+      "command": "findmnt",
+      "category": "diagnóstico",
+      "description": "Consulta segura de pontos de montagem",
+      "required": true,
+      "when_missing": "instalar o pacote util-linux pelo gerenciador oficial"
+    },
+    {
+      "id": "systemctl",
+      "type": "command",
+      "command": "systemctl",
+      "category": "sistema",
+      "description": "Consulta de unidades systemd",
+      "required": true,
+      "when_missing": "revisar compatibilidade; o perfil de referência requer systemd"
+    },
+    {
+      "id": "snapper",
+      "type": "command",
+      "command": "snapper",
+      "category": "recuperação",
+      "description": "Gerenciamento de snapshots Btrfs",
+      "required": true,
+      "when_missing": "planejar instalação e configuração do Snapper antes de qualquer implantação"
+    },
+    {
+      "id": "bootctl",
+      "type": "command",
+      "command": "bootctl",
+      "category": "inicialização",
+      "description": "Consulta do systemd-boot",
+      "required": false,
+      "when_missing": "nenhuma; manter suporte a outros mecanismos de inicialização"
+    },
+    {
+      "id": "flatpak",
+      "type": "command",
+      "command": "flatpak",
+      "category": "aplicativos",
+      "description": "Runtime de aplicações Flatpak",
+      "required": false,
+      "when_missing": "oferecer como módulo opcional após confirmação"
+    },
+    {
+      "id": "ufw",
+      "type": "command",
+      "command": "ufw",
+      "category": "segurança",
+      "description": "Interface de firewall UFW",
+      "required": false,
+      "when_missing": "avaliar firewall compatível antes de recomendar instalação"
+    },
+    {
+      "id": "steam",
+      "type": "command",
+      "command": "steam",
+      "category": "jogos",
+      "description": "Cliente Steam",
+      "required": false,
+      "when_missing": "nenhuma; componente exclusivo do perfil opcional de jogos"
+    }
+  ]
+}
