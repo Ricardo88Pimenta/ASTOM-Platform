@@ -1,0 +1,39 @@
+name: Validação da ASTOM Platform
+
+on:
+  push:
+    paths:
+      - 'core/**'
+      - 'tests/**'
+      - '.github/workflows/validacao.yml'
+  pull_request:
+    paths:
+      - 'core/**'
+      - 'tests/**'
+      - '.github/workflows/validacao.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  diagnostico:
+    name: Diagnóstico somente leitura
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Obter o código
+        uses: actions/checkout@v4
+
+      - name: Instalar ShellCheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes shellcheck
+
+      - name: Validar sintaxe Bash
+        run: bash -n core/astom-diagnostico.sh
+
+      - name: Executar ShellCheck
+        run: shellcheck core/astom-diagnostico.sh tests/teste-diagnostico.sh
+
+      - name: Executar testes de regressão
+        run: bash tests/teste-diagnostico.sh
